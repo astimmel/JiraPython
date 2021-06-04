@@ -1,0 +1,46 @@
+#Dicitionaries for division, dept and reqstr are defined outside the scope of this.
+#When a schedule request for a certain employee, send straight to backlog.
+
+for autoassign in jira_connect.search_issues('project = BIDW AND status = "Not Started" AND assignee is EMPTY AND "Discover Resource" is EMPTY AND issuetype != epic', maxResults=50):
+    #print('{}: {}'.format(autoassign.key, autoassign.fields.customfield_11025))
+    #print(thisdict['{}'. format(autoassign.fields.customfield_11025)])
+
+    if '{}'.format(autoassign.fields.customfield_11026) in dept.keys():
+        autoassign.update(fields={'customfield_12113': {'value': '1'},
+                              'assignee': {'name': dept['{}'.format(autoassign.fields.customfield_11026)]},
+                              'customfield_11010': {
+                                  'name': dept['{}'.format(autoassign.fields.customfield_11026)]}})
+        jira_connect.add_comment(autoassign,
+                             "Please note, This request was automatically transitioned. Please make sure to update all fields and if this was incorrectly assigned please let me know",
+                             visibility={'type': 'role', 'value': 'Developers'})
+        jira_connect.remove_watcher(autoassign, 'astimmel')
+        if str(autoassign.fields.customfield_11010) == 'Steven Galla' and str(autoassign.fields.issuetype) == 'Schedule' and format(
+                autoassign.fields.components == {"components": [{"name": "BI-Dev"}]}):
+            jira_connect.transition_issue(autoassign, '241')
+            autoassign.update(notify=False, fields={"components": [{"name": "BI-Dev"}], 'assignee': {'name': "-1"}})
+
+    elif '{}'.format(autoassign.fields.customfield_11025) in division.keys():
+        autoassign.update(fields={'customfield_12113': {'value': '1'},'assignee': {'name': division['{}'. format(autoassign.fields.customfield_11025)]} , 'customfield_11010': {'name': division['{}'. format(autoassign.fields.customfield_11025)]}})
+        jira_connect.add_comment(autoassign,"Please note, This request was automatically transitioned. Please make sure to update all fields and if this was incorrectly assigned please let me know",visibility={'type': 'role', 'value': 'Developers'})
+        jira_connect.remove_watcher(autoassign, 'astimmel')
+        if str(autoassign.fields.customfield_11010) == 'Steven Galla' and str(
+                autoassign.fields.issuetype) == 'Schedule' and format(
+                autoassign.fields.components == {"components": [{"name": "BI-Dev"}]}):
+            jira_connect.transition_issue(autoassign, '241')
+            autoassign.update(notify=False, fields={"components": [{"name": "BI-Dev"}], 'assignee': {'name': "-1"}})
+
+
+    elif '{}'.format(autoassign.fields.reporter.name) in reqstr.keys():
+        autoassign.update(fields={'customfield_12113': {'value': '1'},
+                              'assignee': {'name': reqstr['{}'.format(autoassign.fields.reporter.name)]},
+                              'customfield_11010': {
+                                  'name': reqstr['{}'.format(autoassign.fields.reporter.name)]}})
+        jira_connect.add_comment(autoassign,
+                             "Please note, This request was automatically transitioned. Please make sure to update all fields and if this was incorrectly assigned please let me know",
+                             visibility={'type': 'role', 'value': 'Developers'})
+        jira_connect.remove_watcher(autoassign, 'astimmel')
+        if str(autoassign.fields.customfield_11010) == 'Steven Galla' and str(
+                autoassign.fields.issuetype) == 'Schedule' and format(
+                autoassign.fields.components == {"components": [{"name": "BI-Dev"}]}):
+            jira_connect.transition_issue(autoassign, '241')
+            autoassign.update(notify=False, fields={"components": [{"name": "BI-Dev"}], 'assignee': {'name': "-1"}})
