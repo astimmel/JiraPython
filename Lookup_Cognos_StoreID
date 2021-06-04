@@ -1,0 +1,50 @@
+#Find Cognos unique report ID in Jira Description, Comments or Migration note. Lookup is saved in a dictionary called storeid
+
+def comment_text():
+    com = jira_connect.issue(issue.key)
+    comments = com.fields.comment.comments
+    for comment in comments:
+        allcomment = (comment.body)
+        commentstring=''.join(allcomment)
+        split = (re.findall(r"[\w']+", commentstring))
+        for word in split:
+            if (len(word) == 33 and word[:1] == "i"):
+                return word
+
+
+##iterate individually for more than 1000 records
+# for x in range(1, 1000):
+#     z= "BIDW-%s" % x
+#     try:
+#         issue = jira_connect.issue(z)
+#         print(issue)
+#
+#         text = ('{}, {}, {}'.format(issue.fields.description, issue.fields.customfield_10219, comment_text()))
+#         split = (re.findall(r"[\w']+", text))
+#         for word in split:
+#             if (len(word) == 33 and word[:1]=="i"):
+#                 print('{}:'.format(issue.key), word)
+#
+#                 if any(x in word for x in storeid):
+#                     issue.fields.labels.append(storeid[word])
+#                     issue.update(fields={"labels": issue.fields.labels})
+#                 else:
+#                     continue
+#     except:
+#         pass
+
+#bulk search update
+for issue in jira_connect.search_issues('project = bidw AND ("Closed Date" >= startOfDay(-5) OR updatedDate >= startOfDay(-5)) ' , maxResults=1000):
+    #print('{}: {}, {}, {}, {}'.format(issue.key, issue.fields.summary, issue.fields.reporter.name, issue.fields.description, issue.fields.customfield_11026))
+    text = ('{}, {}, {}'.format(issue.fields.description, issue.fields.customfield_10219, comment_text()))
+    split = (re.findall(r"[\w']+", text))
+    for word in split:
+        if (len(word) == 33 and word[:1]=="i"):
+            print('{}:'.format(issue.key), word)
+            #print(issue.fields.description)
+
+            if any(x in word for x in storeid):
+                issue.fields.labels.append(storeid[word])
+                issue.update(fields={"labels": issue.fields.labels})
+            else:
+                continue
