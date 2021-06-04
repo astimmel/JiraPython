@@ -1,0 +1,45 @@
+
+import yaml
+import logging
+from jira import JIRA, Issue
+import os
+import re
+import base64
+import json
+
+
+def get_jira_credentials(user=None):
+    logging.info('Import connection info from yaml')
+    logging.info(f'Getting credentials for {user}')
+    with open(r'S:\Finance_Analysis_Shared\Aaron S\Python\jira_conn.eyaml') as file:
+        credentials = yaml.load(file, Loader=yaml.FullLoader)
+    ##yaml.load('S:\Finance_Analysis_Shared\Aaron S\Python\jira_conn.eyaml', Loader=yaml.FullLoader)
+
+    jira_credentials = credentials['jira']
+
+    return jira_credentials
+
+def connect_jira(log, jira_user, jira_password, env=None):
+    """
+    Connect to JIRA. Return None on error
+    """
+    login_info = get_jira_credentials()
+    jiraURL = login_info['jira_url']
+    if env == 'Stage':
+        jiraURL = login_info['jira_stage_url']
+    logging.info(f'Connecting to Jira {env}')
+    jiraCertPath = login_info['cert_path']
+
+    try:
+
+        jira_options = {'server': jiraURL,
+                        'verify': jiraCertPath}
+        jira = JIRA(options=jira_options, basic_auth=(jira_user, jira_password))
+        return jira
+    except Exception as e:
+        log.error("Failed to connect to JIRA: %s" % e)
+        return None
+        
+ connect = get_jira_credentials()
+
+jira_connect = connect_jira(logging, connect["username"], base64.b64decode(connect["pass"]).decode("utf-8"), env="environ")
