@@ -1,0 +1,5 @@
+
+##comment after 4 days of no action on uat or migration
+for remindercomment in jira_connect.search_issues('project = bidw AND status in (UAT) AND NOT status changed after -4d and "Last Comment Date" <=  -4d'):
+    jira_connect.add_comment(remindercomment,"Hi [~{}], This request is waiting on your action. Please review and transition appropriately. Thank you" .format(remindercomment.fields.assignee.name))
+    jira_connect.remove_watcher(remindercomment, 'currentuser()')
