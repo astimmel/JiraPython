@@ -11,9 +11,9 @@ import json
 def get_jira_credentials(user=None):
     logging.info('Import connection info from yaml')
     logging.info(f'Getting credentials for {user}')
-    with open(r'S:\Finance_Analysis_Shared\Aaron S\Python\jira_conn.eyaml') as file:
+    with open(r'FILE PATH FOR EYAML') as file:
         credentials = yaml.load(file, Loader=yaml.FullLoader)
-    ##yaml.load('S:\Finance_Analysis_Shared\Aaron S\Python\jira_conn.eyaml', Loader=yaml.FullLoader)
+   
 
     jira_credentials = credentials['jira']
 
